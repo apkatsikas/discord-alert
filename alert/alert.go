@@ -26,8 +26,7 @@ func SendAlert(alertContent string) error {
 
 	s := session.New("Bot " + token)
 
-	channelID, err := discord.ParseSnowflake(channelString)
-
+	channelSnowflake, err := discord.ParseSnowflake(channelString)
 	if err != nil {
 		return fmt.Errorf("failed to parse snowflake from string %v", channelString)
 	}
@@ -39,9 +38,8 @@ func SendAlert(alertContent string) error {
 	}
 	defer s.Close()
 
-	msg, err := s.SendMessage(discord.ChannelID(channelID), alertContent)
-
-	if err != nil {
+	channelID := discord.ChannelID(channelSnowflake)
+	if msg, err := s.SendMessage(channelID, alertContent); err != nil {
 		return fmt.Errorf("failed to send message %v - error was %v", msg, err)
 	}
 	return nil
